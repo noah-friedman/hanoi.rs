@@ -15,11 +15,13 @@ impl Pole {
     }
 
     /// Constructs a new [`Pole`] object with ascending [Disks](Disk) stored within
-    pub fn new_filled() -> Pole {
+    ///
+    /// * `s` - number of disks to create on the pole
+    pub fn new_filled(s: u8) -> Pole {
         unimplemented!()
     }
 
-    /// Adds a [`Disk`] onto the [`Pole`]
+    /// Adds a [`Disk`] (`d`) onto the [`Pole`]
     pub fn push(&mut self, d: Disk) -> Result<(), PoleError> {
         unimplemented!()
     }
