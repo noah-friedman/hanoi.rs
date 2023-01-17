@@ -49,3 +49,26 @@ impl fmt::Display for PoleError {
     }
 }
 impl std::error::Error for PoleError {}
+
+#[cfg(test)]
+mod pole_tests {
+    use super::Pole;
+    use rand::random;
+
+    #[test]
+    fn new_is_empty() {
+        let p = Pole::new();
+        assert_eq!(p.0.len(), 0);
+    }
+
+    #[test]
+    fn new_filled_is_filled() {
+        let size = random();
+        let mut p = Pole::new_filled(size);
+
+        assert_eq!(p.0.len() as u8, size);
+        for i in 0..size {
+            assert_eq!(p.0[i as usize], i+1);
+        }
+    }
+}
