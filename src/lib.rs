@@ -10,28 +10,28 @@ pub struct Pole(Vec<u8>);
 
 impl Pole {
     /// Constructs a new [`Pole`] object
-    fn new() -> Pole {
+    pub fn new() -> Pole {
         unimplemented!()
     }
 
     /// Constructs a new [`Pole`] object with ascending [Disks](Disk) stored within
-    fn new_filled() -> Pole {
+    pub fn new_filled() -> Pole {
         unimplemented!()
     }
 
     /// Adds a [`Disk`] onto the [`Pole`]
-    fn push(d: Disk) -> Result<(), PoleError> {
+    pub fn push(&mut self, d: Disk) -> Result<(), PoleError> {
         unimplemented!()
     }
 
     /// Removes the top-most [`Disk`] from the [`Pole`] and returns it
-    fn pop() -> Result<Disk, PoleError> {
+    pub fn pop(&mut self) -> Result<Disk, PoleError> {
         unimplemented!()
     }
 }
 
 #[derive(Debug)]
-enum PoleError {
+pub enum PoleError {
     PlaceOnSmallerDisk {
         large: u8,
         small: u8,
