@@ -32,7 +32,7 @@ impl Pole {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum PoleError {
     PlaceOnSmallerDisk {
         large: u8,
@@ -52,7 +52,7 @@ impl std::error::Error for PoleError {}
 
 #[cfg(test)]
 mod pole_tests {
-    use super::Pole;
+    use super::{Pole, PoleError};
     use rand::random;
 
     #[test]
@@ -64,11 +64,32 @@ mod pole_tests {
     #[test]
     fn new_filled_is_filled() {
         let size = random();
-        let mut p = Pole::new_filled(size);
+        let p = Pole::new_filled(size);
 
         assert_eq!(p.0.len() as u8, size);
         for i in 0..size {
             assert_eq!(p.0[i as usize], i+1);
         }
+    }
+
+    #[test]
+    fn push_requires_larger_base_disk_or_empty() {
+        let e = Pole::new_filled(1).push(2);
+        assert!(e.is_err());
+        assert_eq!(e.unwrap_err(), PoleError::PlaceOnSmallerDisk { large: 2, small: 1 });
+
+        let mut p = Pole::new();
+        assert!(p.push(2).is_ok());
+        assert!(p.push(1).is_ok());
+    }
+
+    #[test]
+    fn pop_requires_not_empty() {
+        let mut p = Pole::new_filled(1);
+        assert!(p.pop().is_ok());
+        
+        let e = p.pop();
+        assert!(e.is_err());
+        assert_eq!(e.unwrap_err(), PoleError::RemoveFromEmpty);
     }
 }
