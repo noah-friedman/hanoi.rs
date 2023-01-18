@@ -6,29 +6,41 @@ pub type Disk = u8;
 
 /// Struct containing a vector that represents a pole with [disks](Disk) on it
 #[derive(Debug, Clone)]
-pub struct Pole(Vec<u8>);
+pub struct Pole(Vec<Disk>);
 
 impl Pole {
     /// Constructs a new [`Pole`] object
     pub fn new() -> Pole {
-        unimplemented!()
+        Pole(Vec::new())
     }
 
     /// Constructs a new [`Pole`] object with ascending [Disks](Disk) stored within
     ///
     /// * `s` - number of disks to create on the pole
     pub fn new_filled(s: u8) -> Pole {
-        unimplemented!()
+        let mut v = Vec::new();
+        for i in (1..=s).rev() {
+            v.push(i);
+        }
+
+        return Pole(v);
     }
 
     /// Adds a [`Disk`] (`d`) onto the [`Pole`]
     pub fn push(&mut self, d: Disk) -> Result<(), PoleError> {
-        unimplemented!()
+        return if self.0.len() > 0 && self.0[0] < d { 
+            Err(PoleError::PlaceOnSmallerDisk { large: d, small: self.0[0] }) 
+        } else {
+            Ok(())
+        }
     }
 
     /// Removes the top-most [`Disk`] from the [`Pole`] and returns it
     pub fn pop(&mut self) -> Result<Disk, PoleError> {
-        unimplemented!()
+        match self.0.pop() {
+            Some(v) => Ok(v),
+            None => Err(PoleError::RemoveFromEmpty)
+        }
     }
 }
 
@@ -68,7 +80,7 @@ mod pole_tests {
 
         assert_eq!(p.0.len() as u8, size);
         for i in 0..size {
-            assert_eq!(p.0[i as usize], i+1);
+            assert_eq!(p.0[i as usize], size-i);
         }
     }
 
