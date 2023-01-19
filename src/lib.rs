@@ -10,39 +10,51 @@ pub struct Pole(Vec<Disk>);
 
 impl Pole {
     /// Constructs a new [`Pole`] object
-    pub fn new() -> Pole {
+    pub const fn new() -> Pole {
         Pole(Vec::new())
     }
 
-    /// Constructs a new [`Pole`] object with ascending [Disks](Disk) stored within
+    /// Deletes the current contents and fills the [`Pole`] with ascending [Disks](Disk) stored within
+    ///
+    /// Returns [&mut self](Pole) for chaining
     ///
     /// * `s` - number of disks to create on the pole
-    pub fn new_filled(s: u8) -> Pole {
+    pub fn fill(&mut self, s: u8) {
+        // Create a vector
         let mut v = Vec::new();
+        
+        // Fill it up with descending values
         for i in (1..=s).rev() {
             v.push(i);
         }
 
-        return Pole(v);
+        // Replace the Pole data with the new vector
+        self.0 = v;
     }
 
     /// Adds a [`Disk`] (`d`) onto the [`Pole`]
     pub fn push(&mut self, d: Disk) -> Result<(), PoleError> {
+        // Verify that the disk is smaller than the top disk on the Pole...
         return if self.0.len() > 0 && self.0[0] < d { 
+            // ... if not, return an error ...
             Err(PoleError::PlaceOnSmallerDisk { large: d, small: self.0[0] }) 
         } else {
+            // ... otherwise, push the Disk onto the Pole and return
+            self.0.push(d);
             Ok(())
         }
     }
 
     /// Removes the top-most [`Disk`] from the [`Pole`] and returns it
     pub fn pop(&mut self) -> Result<Disk, PoleError> {
+        // Attempt to pop a value from data vector ...
         match self.0.pop() {
-            Some(v) => Ok(v),
-            None => Err(PoleError::RemoveFromEmpty)
+            Some(v) => Ok(v),   // ... return it if everything is okay ...
+            None => Err(PoleError::RemoveFromEmpty) // ... throw an error if there is no value
         }
     }
 }
+
 
 #[derive(Debug, PartialEq)]
 pub enum PoleError {
@@ -74,9 +86,11 @@ mod pole_tests {
     }
 
     #[test]
-    fn new_filled_is_filled() {
+    fn fill_fills_pole() {
         let size = random();
-        let p = Pole::new_filled(size);
+
+        let mut p = Pole::new();
+        p.fill(size);
 
         assert_eq!(p.0.len() as u8, size);
         for i in 0..size {
@@ -86,7 +100,9 @@ mod pole_tests {
 
     #[test]
     fn push_requires_larger_base_disk_or_empty() {
-        let e = Pole::new_filled(1).push(2);
+        let mut p = Pole::new();
+        p.fill(1);
+        let e = p.push(2);
         assert!(e.is_err());
         assert_eq!(e.unwrap_err(), PoleError::PlaceOnSmallerDisk { large: 2, small: 1 });
 
@@ -97,9 +113,9 @@ mod pole_tests {
 
     #[test]
     fn pop_requires_not_empty() {
-        let mut p = Pole::new_filled(1);
+        let mut p = Pole::new();
+        p.fill(1);
         assert!(p.pop().is_ok());
-        
         let e = p.pop();
         assert!(e.is_err());
         assert_eq!(e.unwrap_err(), PoleError::RemoveFromEmpty);
